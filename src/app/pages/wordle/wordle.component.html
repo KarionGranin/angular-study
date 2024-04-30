@@ -1,1 +1,27 @@
-<p>wordle works!</p>
+<div class="header">
+  Сыграй в Wordle на русском!
+  <div class="size">
+    <select
+      name="Количество букв в загаданном слове"
+      [formControl]="sizeControl"
+    >
+      <option [value]="4">4</option>
+      <option [value]="5">5</option>
+      <option [value]="6">6</option>
+    </select>
+  </div>
+</div>
+
+<div class="entry" *ngIf="size$ | async as size">
+  <div>
+    <table>
+      <tbody>
+        <tr *ngFor="let row of tryesCount | arrayFromNumber">
+          <td *ngFor="let col of size | arrayFromNumber">
+            <div class="cell">A</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
