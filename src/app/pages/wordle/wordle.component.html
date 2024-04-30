@@ -12,13 +12,29 @@
   </div>
 </div>
 
-<div class="entry" *ngIf="size$ | async as size">
+<div
+  class="entry"
+  *ngIf="{
+    size: (size$ | async) ?? 0,
+    wordRows: (wordRows$ | async) ?? []
+  } as params"
+>
   <div>
     <table>
       <tbody>
-        <tr *ngFor="let row of tryesCount | arrayFromNumber">
-          <td *ngFor="let col of size | arrayFromNumber">
-            <div class="cell">A</div>
+        <tr *ngFor="let row of tryesCount | arrayFromNumber; let rowIndex">
+          <td
+            *ngFor="let col of params.size | arrayFromNumber; let letterIndex"
+          >
+            <div
+              class="cell"
+              [class.cell-orange]="letter.type === 'hasbut'"
+              [class.cell-green]="letter.type === 'has'"
+              [class.cell-gray]="letter.type === 'hasnt'"
+              *ngIf="params.wordRows[rowIndex][letterIndex] ?? {} as letter"
+            >
+              {{ letter.letter ?? "" | uppercase }}
+            </div>
           </td>
         </tr>
       </tbody>
