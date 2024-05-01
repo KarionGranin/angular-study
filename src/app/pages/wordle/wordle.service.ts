@@ -8,6 +8,7 @@ import {
   WordleLetterType,
   WordleWord,
 } from './wordle.interface';
+import { WORDLE_CONFIG } from './wordle.config';
 
 @Injectable()
 export class WordleService {
@@ -35,48 +36,6 @@ export class WordleService {
 
   public gameOver$ = this.gameOver$$.asObservable();
 
-  private readonly alphabet: string[] = [
-    'а',
-    'б',
-    'в',
-    'г',
-    'д',
-    'е',
-    'ё',
-    'ж',
-    'з',
-    'и',
-    'й',
-    'к',
-    'л',
-    'м',
-    'н',
-    'о',
-    'п',
-    'р',
-    'с',
-    'т',
-    'у',
-    'ф',
-    'х',
-    'ц',
-    'ч',
-    'ш',
-    'щ',
-    'ъ',
-    'ы',
-    'ь',
-    'э',
-    'ю',
-    'я',
-  ];
-
-  private readonly wordCollection: WordCollection = {
-    [4]: [],
-    [5]: [],
-    [6]: [],
-  };
-
   private get size(): number {
     return this.size$$.getValue();
   }
@@ -102,7 +61,7 @@ export class WordleService {
   }
 
   private selectRandomWord(): void {
-    const words: string[] = this.wordCollection[this.size];
+    const words: string[] = WORDLE_CONFIG.wordCollection[this.size];
     this.secretWord = words[this.getRandom(0, words.length - 1)];
     console.log(this.secretWord);
   }
@@ -196,7 +155,10 @@ export class WordleService {
           return;
         }
 
-        if (this.alphabet.includes(event.key) && wordSize < this.size) {
+        if (
+          WORDLE_CONFIG.alphabet.includes(event.key) &&
+          wordSize < this.size
+        ) {
           this.handleLetterKey(event.key, wordRows, currentWord);
         }
       }
