@@ -1,3 +1,10 @@
+.game {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
 .header {
   color: #fff;
   display: flex;
@@ -22,6 +29,48 @@
     opacity: 1;
     -webkit-transform: scale(1.1);
     transform: scale(1.1);
+  }
+}
+
+.size {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.size-title {
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+
+.size-btns {
+  display: flex;
+}
+
+.size-btn {
+  color: #000000;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid black;
+  background: #fff3cd;
+  cursor: pointer;
+  margin: 0 4px;
+  border-radius: 16%;
+  font-size: 24px;
+  transition: all 0.15s;
+
+  &-active {
+    background: rgb(42, 151, 66);
+    cursor: default;
+  }
+
+  &:hover:not(&-active) {
+    background: rgb(71, 187, 96);
   }
 }
 
@@ -60,11 +109,21 @@
 }
 
 .reset-btn {
-  color: #000000;
+  padding: 12px 10px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #393926;
+  background: #ffffa5;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: 16px;
 }
 
 .controls {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 }

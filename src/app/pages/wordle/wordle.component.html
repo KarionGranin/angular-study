@@ -1,67 +1,69 @@
-<div class="header">
-  <div class="title">Сыграй в Wordle на русском!</div>
-  <div
-    class="controls"
-    *ngIf="{
-      gameOver: gameOver$ | async,
-      currentRowIndex: currentRowIndex$ | async
-    } as params"
-  >
-    <button
-      class="reset-btn"
-      (click)="abortGame()"
-      *ngIf="
-        params.currentRowIndex ||
-        (params.gameOver !== 'unknown' && !params.currentRowIndex)
-      "
+<div class="game">
+  <div class="header">
+    <div class="title">Сыграй в Wordle на русском!</div>
+    <div
+      class="controls"
+      *ngIf="{
+        gameOver: gameOver$ | async,
+        currentRowIndex: currentRowIndex$ | async,
+        size: size$ | async
+      } as params"
     >
-      {{ params.gameOver === "unknown" ? "Сдаться" : "Начать заново" }}
-    </button>
-    <div class="size">
-      <select
-        name="Количество букв в загаданном слове"
-        [formControl]="sizeControl"
+      <div class="size">
+        <div class="size-title">Количество букв в загаданном слове</div>
+        <div class="size-btns">
+          <div
+            class="size-btn"
+            [class.size-btn-active]="params.size === n + 4"
+            *ngFor="let n of 8 | arrayFromNumber"
+            (click)="changeSize(n + 4)"
+          >
+            {{ n + 4 }}
+          </div>
+        </div>
+      </div>
+
+      <button
+        class="reset-btn"
+        (click)="abortGame()"
+        *ngIf="
+          params.currentRowIndex ||
+          (params.gameOver !== 'unknown' && !params.currentRowIndex)
+        "
       >
-        <option [value]="4">4</option>
-        <option [value]="5">5</option>
-        <option [value]="6">6</option>
-        <option [value]="7">7</option>
-        <option [value]="8">8</option>
-        <option [value]="9">9</option>
-        <option [value]="10">10</option>
-        <option [value]="11">11</option>
-      </select>
+        {{ params.gameOver === "unknown" ? "Сдаться" : "Начать заново" }}
+      </button>
     </div>
   </div>
-</div>
 
-<div
-  class="entry"
-  *ngIf="{
-    size: (size$ | async) ?? 0,
-    wordRows: (wordRows$ | async) ?? []
-  } as params"
->
-  <div>
-    <table>
-      <tbody>
-        <tr *ngFor="let row of tryesCount | arrayFromNumber; let rowIndex">
-          <td
-            *ngFor="let col of params.size | arrayFromNumber; let letterIndex"
-          >
-            <div
-              class="cell"
-              [class.cell-animation]="params.wordRows[rowIndex][letterIndex]"
-              [class.cell-orange]="letter.type === 'hasbut'"
-              [class.cell-green]="letter.type === 'has'"
-              [class.cell-gray]="letter.type === 'hasnt'"
-              *ngIf="params.wordRows[rowIndex][letterIndex] ?? {} as letter"
+  <div
+    class="entry"
+    *ngIf="{
+      size: (size$ | async) ?? 0,
+      wordRows: (wordRows$ | async) ?? []
+    } as params"
+  >
+    <div>
+      <table>
+        <tbody>
+          <tr *ngFor="let row of tryesCount | arrayFromNumber; let rowIndex">
+            <td
+              *ngFor="let col of params.size | arrayFromNumber; let letterIndex"
             >
-              {{ letter.letter ?? "" | uppercase }}
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+              <div
+                class="cell"
+                [class.cell-animation]="params.wordRows[rowIndex][letterIndex]"
+                [class.cell-orange]="letter.type === 'hasbut'"
+                [class.cell-green]="letter.type === 'has'"
+                [class.cell-gray]="letter.type === 'hasnt'"
+                *ngIf="params.wordRows[rowIndex][letterIndex] ?? {} as letter"
+              >
+                {{ letter.letter ?? "" | uppercase }}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

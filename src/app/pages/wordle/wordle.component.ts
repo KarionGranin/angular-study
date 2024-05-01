@@ -20,8 +20,6 @@ export class WordleComponent {
   public currentRowIndex$: Observable<number> =
     this.wordleService.currentRowIndex$;
 
-  public sizeControl: FormControl<string> = this.wordleService.sizeControl;
-
   public readonly tryesCount: number = this.wordleService.tryesCount;
 
   public wordRows$: Observable<WordleWord[]> = this.wordleService.wordRows$;
@@ -30,5 +28,9 @@ export class WordleComponent {
 
   public abortGame(): void {
     this.wordleService.abortGame();
+  }
+
+  public changeSize(size: number): void {
+    this.wordleService.changeSize(size);
   }
 }

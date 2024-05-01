@@ -30,10 +30,6 @@ export class WordleService {
 
   public currentRowIndex$ = this.currentRowIndex$$.asObservable();
 
-  public sizeControl = new FormControl<string>(this.defaultSize.toString(), {
-    nonNullable: true,
-  });
-
   public readonly tryesCount = 6;
 
   private secretWord: string = '';
@@ -70,7 +66,6 @@ export class WordleService {
 
   constructor(private dialog: MatDialog, private snackBar: MatSnackBar) {
     this.listenSizeChanges();
-    this.listenSizeControlChanges();
     this.listenKeyboard();
     this.listenGameover();
   }
@@ -81,6 +76,10 @@ export class WordleService {
     } else {
       this.reset();
     }
+  }
+
+  public changeSize(size: number): void {
+    this.size$$.next(size);
   }
 
   private openGameoverDialog(): void {
@@ -135,12 +134,6 @@ export class WordleService {
   private listenSizeChanges(): void {
     this.size$$.subscribe((size: number) => {
       this.reset();
-    });
-  }
-
-  private listenSizeControlChanges(): void {
-    this.sizeControl.valueChanges.subscribe((size: string) => {
-      this.size$$.next(+size);
     });
   }
 
