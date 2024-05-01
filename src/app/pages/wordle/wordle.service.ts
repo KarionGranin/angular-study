@@ -6,6 +6,7 @@ import {
   WordleLetter,
   WordleLetterType,
   WordleWord,
+  WordleWordLetterRepeats,
 } from './wordle.interface';
 import { WORDLE_CONFIG } from './wordle.config';
 import { MatDialog } from '@angular/material/dialog';
@@ -40,6 +41,8 @@ export class WordleService {
   private gameOver$$ = new BehaviorSubject<WordleGameOverType>('unknown');
 
   public gameOver$ = this.gameOver$$.asObservable();
+
+  private wordleWordLetterRepeats: WordleWordLetterRepeats = {};
 
   private get currentRowIndex(): number {
     return this.currentRowIndex$$.getValue();
@@ -118,7 +121,15 @@ export class WordleService {
   private selectRandomWord(): void {
     const words: string[] = WORD_COLLECTION[this.size];
     this.secretWord = words[this.getRandom(0, words.length - 1)];
-    console.log(this.secretWord);
+
+    this.secretWord.split('').forEach((letter: string) => {
+      if (!this.wordleWordLetterRepeats[letter]) {
+        this.wordleWordLetterRepeats[letter] = 0;
+      }
+      this.wordleWordLetterRepeats[letter]++;
+    });
+
+    console.log(this.secretWord, this.wordleWordLetterRepeats);
   }
 
   private listenSizeChanges(): void {
@@ -134,17 +145,24 @@ export class WordleService {
   }
 
   private getTypeForLetter(letter: WordleLetter): WordleLetterType {
-    const wordLetterIndex: number = this.secretWord.indexOf(letter.letter);
-
-    if (wordLetterIndex === -1) {
-      return 'hasnt';
-    }
-
     if (this.secretWord[letter.index] === letter.letter) {
       return 'has';
     }
 
-    return 'hasbut';
+    if (this.secretWord.indexOf(letter.letter) !== -1) {
+      const currentWordLetterRepeats = this.currentWord.filter(
+        (l: WordleLetter) => l.letter === letter.letter && letter !== l
+      );
+
+      if (
+        currentWordLetterRepeats.length <
+        this.wordleWordLetterRepeats[letter.letter]
+      ) {
+        return 'hasbut';
+      }
+    }
+
+    return 'hasnt';
   }
 
   private wordIsCompleted(word: WordleWord): boolean {

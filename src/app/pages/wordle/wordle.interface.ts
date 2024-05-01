@@ -18,3 +18,7 @@ export interface WordleGameOverModalData {
   gameoverType: WordleGameOverType;
   secretWord: string;
 }
+
+export interface WordleWordLetterRepeats {
+  [key: string]: number;
+}
