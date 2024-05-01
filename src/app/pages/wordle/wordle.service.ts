@@ -170,21 +170,32 @@ export class WordleService {
   }
 
   private handleBackspace(): void {
-    this.wordRows[this.currentRowIndex] = this.currentWord.slice(0, -1);
-    this.wordRows$$.next([...this.wordRows]);
+    if (this.currentWord.length > 0) {
+      this.wordRows[this.currentRowIndex] = this.currentWord.slice(0, -1);
+      this.wordRows$$.next([...this.wordRows]);
+    }
+  }
+
+  private showSnackbar(message: string): void {
+    this.snackBar.open(message, '', {
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      duration: 2000,
+    });
   }
 
   private handleEnter(): void {
+    if (this.currentWord.length < this.size) {
+      this.showSnackbar('Букв меньше, чем надо');
+      return;
+    }
+
     if (
       !WORD_COLLECTION[this.size].includes(
         this.currentWord.map((letter: WordleLetter) => letter.letter).join('')
       )
     ) {
-      this.snackBar.open('Такого слова не существует!', '', {
-        horizontalPosition: 'right',
-        verticalPosition: 'top',
-        duration: 2000,
-      });
+      this.showSnackbar('Такого слова не существует!');
       return;
     }
 
@@ -207,13 +218,15 @@ export class WordleService {
   }
 
   private handleLetterKey(key: string): void {
-    this.currentWord.push({
-      letter: key,
-      type: 'unknown',
-      index: this.currentWord.length,
-    });
+    if (this.currentWord.length < this.size) {
+      this.currentWord.push({
+        letter: key,
+        type: 'unknown',
+        index: this.currentWord.length,
+      });
 
-    this.wordRows$$.next([...this.wordRows]);
+      this.wordRows$$.next([...this.wordRows]);
+    }
   }
 
   private listenKeyboard(): void {
@@ -225,20 +238,17 @@ export class WordleService {
 
         const wordSize: number = this.currentWord.length;
 
-        if (event.key === 'Backspace' && wordSize > 0) {
+        if (event.key === 'Backspace') {
           this.handleBackspace();
           return;
         }
 
-        if (event.key === 'Enter' && wordSize === this.size) {
+        if (event.key === 'Enter') {
           this.handleEnter();
           return;
         }
 
-        if (
-          WORDLE_CONFIG.alphabet.includes(event.key.toLowerCase()) &&
-          wordSize < this.size
-        ) {
+        if (WORDLE_CONFIG.alphabet.includes(event.key.toLowerCase())) {
           this.handleLetterKey(event.key.toLowerCase());
         }
       }
