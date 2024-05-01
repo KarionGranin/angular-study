@@ -76,15 +76,15 @@
 
 .cell {
   color: #000000;
-  width: 100px;
-  height: 100px;
+  width: 76px;
+  height: 76px;
   background: rgb(255, 243, 205);
   border: 2px solid #000000;
   border-radius: 10%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 64px;
+  font-size: 48px;
 
   &-animation {
     animation-delay: 0ms;
