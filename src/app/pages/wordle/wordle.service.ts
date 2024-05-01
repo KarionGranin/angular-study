@@ -230,16 +230,22 @@ export class WordleService {
   }
 
   private listenKeyboard(): void {
-    fromEvent<KeyboardEvent>(document, 'keyup').subscribe(
+    fromEvent<KeyboardEvent>(document, 'keydown').subscribe(
       (event: KeyboardEvent) => {
         if (this.gameOver !== 'unknown') {
           return;
         }
 
-        const wordSize: number = this.currentWord.length;
-
         if (event.key === 'Backspace') {
           this.handleBackspace();
+          return;
+        }
+      }
+    );
+
+    fromEvent<KeyboardEvent>(document, 'keyup').subscribe(
+      (event: KeyboardEvent) => {
+        if (this.gameOver !== 'unknown') {
           return;
         }
 
