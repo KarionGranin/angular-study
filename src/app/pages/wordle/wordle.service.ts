@@ -133,17 +133,14 @@ export class WordleService {
     });
   }
 
-  private getTypeForLetter(
-    letter: WordleLetter,
-    index: number
-  ): WordleLetterType {
+  private getTypeForLetter(letter: WordleLetter): WordleLetterType {
     const wordLetterIndex: number = this.secretWord.indexOf(letter.letter);
 
     if (wordLetterIndex === -1) {
       return 'hasnt';
     }
 
-    if (this.secretWord[index] === letter.letter) {
+    if (this.secretWord[letter.index] === letter.letter) {
       return 'has';
     }
 
@@ -174,8 +171,7 @@ export class WordleService {
     }
 
     this.currentWord.forEach(
-      (letter: WordleLetter, index: number) =>
-        (letter.type = this.getTypeForLetter(letter, index))
+      (letter: WordleLetter) => (letter.type = this.getTypeForLetter(letter))
     );
 
     this.wordRows$$.next([...this.wordRows]);
@@ -193,7 +189,12 @@ export class WordleService {
   }
 
   private handleLetterKey(key: string): void {
-    this.currentWord.push({ letter: key, type: 'unknown' });
+    this.currentWord.push({
+      letter: key,
+      type: 'unknown',
+      index: this.currentWord.length,
+    });
+
     this.wordRows$$.next([...this.wordRows]);
   }
 

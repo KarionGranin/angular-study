@@ -3,6 +3,7 @@ export type WordleLetterType = 'has' | 'hasnt' | 'hasbut' | 'unknown';
 export interface WordleLetter {
   letter: string;
   type: WordleLetterType;
+  index: number;
 }
 
 export type WordleWord = WordleLetter[];
