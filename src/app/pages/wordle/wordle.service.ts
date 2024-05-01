@@ -11,7 +11,9 @@ import {
 
 @Injectable()
 export class WordleService {
-  private size$$ = new BehaviorSubject<number>(4);
+  private readonly defaultSize: number = 4;
+
+  private size$$ = new BehaviorSubject<number>(this.defaultSize);
 
   public size$ = this.size$$.asObservable();
 
@@ -21,7 +23,9 @@ export class WordleService {
 
   private currentRowIndex: number = 0;
 
-  public sizeControl = new FormControl<string>('', { nonNullable: true });
+  public sizeControl = new FormControl<string>(this.defaultSize.toString(), {
+    nonNullable: true,
+  });
 
   public readonly tryesCount = 6;
 
@@ -136,6 +140,45 @@ export class WordleService {
     return word.every((letter: WordleLetter) => letter.type === 'has');
   }
 
+  private handleBackspace(
+    wordRows: WordleWord[],
+    currentWord: WordleWord
+  ): void {
+    wordRows[this.currentRowIndex] = currentWord.slice(0, -1);
+
+    this.wordRows$$.next([...wordRows]);
+  }
+
+  private handleEnter(wordRows: WordleWord[], currentWord: WordleWord): void {
+    currentWord.forEach(
+      (letter: WordleLetter, index: number) =>
+        (letter.type = this.getTypeForLetter(letter, index))
+    );
+
+    this.wordRows$$.next([...wordRows]);
+
+    if (this.wordIsCompleted(currentWord)) {
+      this.gameOver$$.next('win');
+
+      return;
+    }
+
+    if (this.currentRowIndex < this.tryesCount - 1) {
+      this.currentRowIndex++;
+    } else {
+      this.gameOver$$.next('lose');
+    }
+  }
+
+  private handleLetterKey(
+    key: string,
+    wordRows: WordleWord[],
+    currentWord: WordleWord
+  ): void {
+    currentWord.push({ letter: key, type: 'unknown' });
+    this.wordRows$$.next([...wordRows]);
+  }
+
   private listenKeyboard(): void {
     fromEvent<KeyboardEvent>(document, 'keyup').subscribe(
       (event: KeyboardEvent) => {
@@ -144,40 +187,17 @@ export class WordleService {
         const wordSize: number = currentWord.length;
 
         if (event.key === 'Backspace' && wordSize > 0) {
-          wordRows[this.currentRowIndex] = currentWord.slice(0, -1);
-
-          this.wordRows$$.next([...wordRows]);
+          this.handleBackspace(wordRows, currentWord);
           return;
         }
 
         if (event.key === 'Enter' && wordSize === this.size) {
-          currentWord.forEach(
-            (letter: WordleLetter, index: number) =>
-              (letter.type = this.getTypeForLetter(letter, index))
-          );
-
-          this.wordRows$$.next([...wordRows]);
-
-          if (this.wordIsCompleted(currentWord)) {
-            this.gameOver$$.next('win');
-
-            return;
-          }
-
-          if (this.currentRowIndex < this.tryesCount - 1) {
-            this.currentRowIndex++;
-          } else {
-            this.gameOver$$.next('lose');
-          }
-
+          this.handleEnter(wordRows, currentWord);
           return;
         }
 
-        if (this.alphabet.includes(event.key)) {
-          if (wordSize < this.size) {
-            currentWord.push({ letter: event.key, type: 'unknown' });
-            this.wordRows$$.next([...wordRows]);
-          }
+        if (this.alphabet.includes(event.key) && wordSize < this.size) {
+          this.handleLetterKey(event.key, wordRows, currentWord);
         }
       }
     );
