@@ -51,6 +51,7 @@
           >
             <div
               class="cell"
+              [class.cell-animation]="params.wordRows[rowIndex][letterIndex]"
               [class.cell-orange]="letter.type === 'hasbut'"
               [class.cell-green]="letter.type === 'has'"
               [class.cell-gray]="letter.type === 'hasnt'"
