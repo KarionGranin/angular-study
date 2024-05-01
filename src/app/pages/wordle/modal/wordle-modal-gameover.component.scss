@@ -1,0 +1,60 @@
+.header {
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.cross {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  cursor: pointer;
+}
+
+.header-title {
+  font-size: 30px;
+  text-align: center;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.title {
+  margin-bottom: 16px;
+  font-size: 30px;
+}
+
+.secret-word {
+  background-color: beige;
+  padding: 16px 12px;
+  border: 1px dashed #000;
+  font-size: 32px;
+  border-radius: 8%;
+  margin-bottom: 16px;
+}
+
+.reset-btn {
+  padding: 12px 10px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #393926;
+  background: #ffffa5;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:hover {
+    background: #ffff78;
+  }
+}

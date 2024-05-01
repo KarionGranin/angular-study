@@ -1,5 +1,14 @@
 .header {
   color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: 24px;
+  margin-bottom: 16px;
 }
 
 .cell {
@@ -28,4 +37,14 @@
     background: rgb(42, 151, 66);
     color: #fff;
   }
+}
+
+.reset-btn {
+  color: #000000;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

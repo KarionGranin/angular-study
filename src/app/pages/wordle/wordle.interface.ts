@@ -12,3 +12,8 @@ export interface WordCollection {
 }
 
 export type WordleGameOverType = 'win' | 'lose' | 'unknown';
+
+export interface WordleGameOverModalData {
+  gameoverType: WordleGameOverType;
+  secretWord: string;
+}

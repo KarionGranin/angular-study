@@ -9,6 +9,10 @@ import {
   WordleWord,
 } from './wordle.interface';
 import { WORDLE_CONFIG } from './wordle.config';
+import { MatDialog } from '@angular/material/dialog';
+import { WordleModalGameoverComponent } from './modal/wordle-modal-gameover.component';
+import { WORD_COLLECTION } from './wordle-word-collection';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable()
 export class WordleService {
@@ -22,7 +26,9 @@ export class WordleService {
 
   public wordRows$ = this.wordRows$$.asObservable();
 
-  private currentRowIndex: number = 0;
+  private currentRowIndex$$ = new BehaviorSubject<number>(0);
+
+  public currentRowIndex$ = this.currentRowIndex$$.asObservable();
 
   public sizeControl = new FormControl<string>(this.defaultSize.toString(), {
     nonNullable: true,
@@ -36,14 +42,55 @@ export class WordleService {
 
   public gameOver$ = this.gameOver$$.asObservable();
 
+  private get currentRowIndex(): number {
+    return this.currentRowIndex$$.getValue();
+  }
+
+  private set currentRowIndex(index: number) {
+    this.currentRowIndex$$.next(index);
+  }
+
+  private get gameOver(): WordleGameOverType {
+    return this.gameOver$$.getValue();
+  }
+
   private get size(): number {
     return this.size$$.getValue();
   }
 
-  constructor() {
+  constructor(private dialog: MatDialog, private snackBar: MatSnackBar) {
     this.listenSizeChanges();
     this.listenSizeControlChanges();
     this.listenKeyboard();
+    this.listenGameover();
+  }
+
+  public abortGame(): void {
+    if (this.gameOver === 'unknown') {
+      this.gameOver$$.next('lose');
+    } else {
+      this.reset();
+    }
+  }
+
+  private openGameoverDialog(): void {
+    const dialogRef = this.dialog.open(WordleModalGameoverComponent, {
+      data: { secretWord: this.secretWord, gameoverType: this.gameOver },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result !== undefined) {
+        this.reset();
+      }
+    });
+  }
+
+  private listenGameover(): void {
+    this.gameOver$$.subscribe(() => {
+      if (this.gameOver !== 'unknown') {
+        this.openGameoverDialog();
+      }
+    });
   }
 
   private resetWords(): void {
@@ -52,6 +99,7 @@ export class WordleService {
 
   private reset(): void {
     this.currentRowIndex = 0;
+    this.gameOver$$.next('unknown');
     this.resetWords();
     this.selectRandomWord();
   }
@@ -61,7 +109,7 @@ export class WordleService {
   }
 
   private selectRandomWord(): void {
-    const words: string[] = WORDLE_CONFIG.wordCollection[this.size];
+    const words: string[] = WORD_COLLECTION[this.size];
     this.secretWord = words[this.getRandom(0, words.length - 1)];
     console.log(this.secretWord);
   }
@@ -88,7 +136,7 @@ export class WordleService {
       return 'hasnt';
     }
 
-    if (wordLetterIndex === index) {
+    if (this.secretWord[index] === letter.letter) {
       return 'has';
     }
 
@@ -109,6 +157,19 @@ export class WordleService {
   }
 
   private handleEnter(wordRows: WordleWord[], currentWord: WordleWord): void {
+    if (
+      !WORD_COLLECTION[this.size].includes(
+        currentWord.map((letter: WordleLetter) => letter.letter).join('')
+      )
+    ) {
+      this.snackBar.open('Такого слова не существует!', '', {
+        horizontalPosition: 'right',
+        verticalPosition: 'top',
+        duration: 2000,
+      });
+      return;
+    }
+
     currentWord.forEach(
       (letter: WordleLetter, index: number) =>
         (letter.type = this.getTypeForLetter(letter, index))
@@ -141,6 +202,10 @@ export class WordleService {
   private listenKeyboard(): void {
     fromEvent<KeyboardEvent>(document, 'keyup').subscribe(
       (event: KeyboardEvent) => {
+        if (this.gameOver !== 'unknown') {
+          return;
+        }
+
         const wordRows: WordleWord[] = this.wordRows$$.getValue();
         const currentWord: WordleWord = wordRows[this.currentRowIndex];
         const wordSize: number = currentWord.length;
@@ -156,10 +221,10 @@ export class WordleService {
         }
 
         if (
-          WORDLE_CONFIG.alphabet.includes(event.key) &&
+          WORDLE_CONFIG.alphabet.includes(event.key.toLowerCase()) &&
           wordSize < this.size
         ) {
-          this.handleLetterKey(event.key, wordRows, currentWord);
+          this.handleLetterKey(event.key.toLowerCase(), wordRows, currentWord);
         }
       }
     );

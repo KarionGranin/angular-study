@@ -36,10 +36,4 @@ export const WORDLE_CONFIG = {
     'ю',
     'я',
   ],
-
-  wordCollection: {
-    [4]: [],
-    [5]: [],
-    [6]: [],
-  } as WordCollection,
 };

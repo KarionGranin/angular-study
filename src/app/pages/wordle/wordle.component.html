@@ -1,14 +1,37 @@
 <div class="header">
-  Сыграй в Wordle на русском!
-  <div class="size">
-    <select
-      name="Количество букв в загаданном слове"
-      [formControl]="sizeControl"
+  <div class="title">Сыграй в Wordle на русском!</div>
+  <div
+    class="controls"
+    *ngIf="{
+      gameOver: gameOver$ | async,
+      currentRowIndex: currentRowIndex$ | async
+    } as params"
+  >
+    <button
+      class="reset-btn"
+      (click)="abortGame()"
+      *ngIf="
+        params.currentRowIndex ||
+        (params.gameOver !== 'unknown' && !params.currentRowIndex)
+      "
     >
-      <option [value]="4">4</option>
-      <option [value]="5">5</option>
-      <option [value]="6">6</option>
-    </select>
+      {{ params.gameOver === "unknown" ? "Сдаться" : "Начать заново" }}
+    </button>
+    <div class="size">
+      <select
+        name="Количество букв в загаданном слове"
+        [formControl]="sizeControl"
+      >
+        <option [value]="4">4</option>
+        <option [value]="5">5</option>
+        <option [value]="6">6</option>
+        <option [value]="7">7</option>
+        <option [value]="8">8</option>
+        <option [value]="9">9</option>
+        <option [value]="10">10</option>
+        <option [value]="11">11</option>
+      </select>
+    </div>
   </div>
 </div>
 

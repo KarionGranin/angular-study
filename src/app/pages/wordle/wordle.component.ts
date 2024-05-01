@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { WordleService } from './wordle.service';
 import { Observable } from 'rxjs';
 import { FormControl } from '@angular/forms';
-import { WordleWord } from './wordle.interface';
+import { WordleGameOverType, WordleWord } from './wordle.interface';
 
 @Component({
   selector: 'app-wordle',
@@ -14,6 +14,12 @@ import { WordleWord } from './wordle.interface';
 export class WordleComponent {
   public size$: Observable<number> = this.wordleService.size$;
 
+  public gameOver$: Observable<WordleGameOverType> =
+    this.wordleService.gameOver$;
+
+  public currentRowIndex$: Observable<number> =
+    this.wordleService.currentRowIndex$;
+
   public sizeControl: FormControl<string> = this.wordleService.sizeControl;
 
   public readonly tryesCount: number = this.wordleService.tryesCount;
@@ -21,4 +27,8 @@ export class WordleComponent {
   public wordRows$: Observable<WordleWord[]> = this.wordleService.wordRows$;
 
   constructor(private wordleService: WordleService) {}
+
+  public abortGame(): void {
+    this.wordleService.abortGame();
+  }
 }

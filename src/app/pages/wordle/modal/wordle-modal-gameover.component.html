@@ -1,0 +1,23 @@
+<div class="header">
+  <span class="header-title">
+    {{ data.gameoverType === "win" ? "Вы победили!" : "Вы проиграли..." }}
+  </span>
+
+  <div class="cross" mat-dialog-close>
+    <mat-icon class="close-icon">close</mat-icon>
+  </div>
+</div>
+
+<mat-dialog-content>
+  <div class="content">
+    <div class="title">
+      {{
+        data.gameoverType === "win"
+          ? "Вы отгадали слово"
+          : "Было загадано слово"
+      }}
+    </div>
+    <div class="secret-word">{{ data.secretWord }}</div>
+    <button class="reset-btn" mat-dialog-close>ИГРАТЬ ЕЩЁ</button>
+  </div>
+</mat-dialog-content>
