@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { BehaviorSubject, fromEvent } from 'rxjs';
 import {
-  WordCollection,
   WordleGameOverType,
   WordleLetter,
   WordleLetterType,
@@ -56,6 +55,14 @@ export class WordleService {
 
   private get size(): number {
     return this.size$$.getValue();
+  }
+
+  private get wordRows(): WordleWord[] {
+    return this.wordRows$$.getValue();
+  }
+
+  private get currentWord(): WordleWord {
+    return this.wordRows[this.currentRowIndex];
   }
 
   constructor(private dialog: MatDialog, private snackBar: MatSnackBar) {
@@ -147,19 +154,15 @@ export class WordleService {
     return word.every((letter: WordleLetter) => letter.type === 'has');
   }
 
-  private handleBackspace(
-    wordRows: WordleWord[],
-    currentWord: WordleWord
-  ): void {
-    wordRows[this.currentRowIndex] = currentWord.slice(0, -1);
-
-    this.wordRows$$.next([...wordRows]);
+  private handleBackspace(): void {
+    this.wordRows[this.currentRowIndex] = this.currentWord.slice(0, -1);
+    this.wordRows$$.next([...this.wordRows]);
   }
 
-  private handleEnter(wordRows: WordleWord[], currentWord: WordleWord): void {
+  private handleEnter(): void {
     if (
       !WORD_COLLECTION[this.size].includes(
-        currentWord.map((letter: WordleLetter) => letter.letter).join('')
+        this.currentWord.map((letter: WordleLetter) => letter.letter).join('')
       )
     ) {
       this.snackBar.open('Такого слова не существует!', '', {
@@ -170,16 +173,15 @@ export class WordleService {
       return;
     }
 
-    currentWord.forEach(
+    this.currentWord.forEach(
       (letter: WordleLetter, index: number) =>
         (letter.type = this.getTypeForLetter(letter, index))
     );
 
-    this.wordRows$$.next([...wordRows]);
+    this.wordRows$$.next([...this.wordRows]);
 
-    if (this.wordIsCompleted(currentWord)) {
+    if (this.wordIsCompleted(this.currentWord)) {
       this.gameOver$$.next('win');
-
       return;
     }
 
@@ -190,13 +192,9 @@ export class WordleService {
     }
   }
 
-  private handleLetterKey(
-    key: string,
-    wordRows: WordleWord[],
-    currentWord: WordleWord
-  ): void {
-    currentWord.push({ letter: key, type: 'unknown' });
-    this.wordRows$$.next([...wordRows]);
+  private handleLetterKey(key: string): void {
+    this.currentWord.push({ letter: key, type: 'unknown' });
+    this.wordRows$$.next([...this.wordRows]);
   }
 
   private listenKeyboard(): void {
@@ -206,17 +204,15 @@ export class WordleService {
           return;
         }
 
-        const wordRows: WordleWord[] = this.wordRows$$.getValue();
-        const currentWord: WordleWord = wordRows[this.currentRowIndex];
-        const wordSize: number = currentWord.length;
+        const wordSize: number = this.currentWord.length;
 
         if (event.key === 'Backspace' && wordSize > 0) {
-          this.handleBackspace(wordRows, currentWord);
+          this.handleBackspace();
           return;
         }
 
         if (event.key === 'Enter' && wordSize === this.size) {
-          this.handleEnter(wordRows, currentWord);
+          this.handleEnter();
           return;
         }
 
@@ -224,7 +220,7 @@ export class WordleService {
           WORDLE_CONFIG.alphabet.includes(event.key.toLowerCase()) &&
           wordSize < this.size
         ) {
-          this.handleLetterKey(event.key.toLowerCase(), wordRows, currentWord);
+          this.handleLetterKey(event.key.toLowerCase());
         }
       }
     );
