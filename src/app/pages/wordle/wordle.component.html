@@ -37,7 +37,7 @@
   </div>
 
   <div
-    class="entry"
+    class="cells"
     *ngIf="{
       size: (size$ | async) ?? 0,
       wordRows: (wordRows$ | async) ?? []
@@ -64,6 +64,49 @@
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <div class="keyboard">
+    <div class="keyboard-row">
+      <div class="keyboard-btn">Й</div>
+      <div class="keyboard-btn">Ц</div>
+      <div class="keyboard-btn absent">У</div>
+      <div class="keyboard-btn">К</div>
+      <div class="keyboard-btn">Е</div>
+      <div class="keyboard-btn">Н</div>
+      <div class="keyboard-btn">Г</div>
+      <div class="keyboard-btn absent">Ш</div>
+      <div class="keyboard-btn">Щ</div>
+      <div class="keyboard-btn">З</div>
+      <div class="keyboard-btn absent">Х</div>
+      <div class="keyboard-btn">Ъ</div>
+    </div>
+    <div class="keyboard-row">
+      <div class="keyboard-btn">Ф</div>
+      <div class="keyboard-btn">Ы</div>
+      <div class="keyboard-btn">В</div>
+      <div class="keyboard-btn correct">А</div>
+      <div class="keyboard-btn">П</div>
+      <div class="keyboard-btn">Р</div>
+      <div class="keyboard-btn">О</div>
+      <div class="keyboard-btn">Л</div>
+      <div class="keyboard-btn">Д</div>
+      <div class="keyboard-btn">Ж</div>
+      <div class="keyboard-btn">Э</div>
+    </div>
+    <div class="keyboard-row">
+      <div class="keyboard-btn keyboard-btn-wide">⌫</div>
+      <div class="keyboard-btn">Я</div>
+      <div class="keyboard-btn">Ч</div>
+      <div class="keyboard-btn">С</div>
+      <div class="keyboard-btn absent">М</div>
+      <div class="keyboard-btn absent">И</div>
+      <div class="keyboard-btn">Т</div>
+      <div class="keyboard-btn">Ь</div>
+      <div class="keyboard-btn">Б</div>
+      <div class="keyboard-btn">Ю</div>
+      <div class="keyboard-btn keyboard-btn-wide">Enter</div>
     </div>
   </div>
 </div>
