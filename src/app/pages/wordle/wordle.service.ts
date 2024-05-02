@@ -147,6 +147,8 @@ export class WordleService {
     const words: string[] = WORD_COLLECTION[this.size];
     this.secretWord = words[this.getRandom(0, words.length - 1)];
 
+    this.wordleWordLetterRepeats = {};
+
     this.secretWord.split('').forEach((letter: string) => {
       if (!this.wordleWordLetterRepeats[letter]) {
         this.wordleWordLetterRepeats[letter] = 0;
@@ -161,27 +163,6 @@ export class WordleService {
     this.size$$.subscribe((size: number) => {
       this.reset();
     });
-  }
-
-  private getTypeForLetter(letter: WordleLetter): WordleLetterType {
-    if (this.secretWord[letter.index] === letter.letter) {
-      return 'has';
-    }
-
-    if (this.secretWord.indexOf(letter.letter) !== -1) {
-      const currentWordLetterRepeats = this.currentWord.filter(
-        (l: WordleLetter) => l.letter === letter.letter && letter !== l
-      );
-
-      if (
-        currentWordLetterRepeats.length <
-        this.wordleWordLetterRepeats[letter.letter]
-      ) {
-        return 'hasbut';
-      }
-    }
-
-    return 'hasnt';
   }
 
   private wordIsCompleted(word: WordleWord): boolean {
@@ -218,9 +199,44 @@ export class WordleService {
       return;
     }
 
-    this.currentWord.forEach((letter: WordleLetter) => {
-      letter.type = this.getTypeForLetter(letter);
+    const letterCountByHas: { [key: string]: number } = {};
+    const letterCountByHasbut: { [key: string]: number } = {};
 
+    this.currentWord.forEach((letter: WordleLetter) => {
+      if (this.secretWord[letter.index] === letter.letter) {
+        if (!letterCountByHas[letter.letter]) {
+          letterCountByHas[letter.letter] = 0;
+        }
+
+        letter.type = 'has';
+        letterCountByHas[letter.letter]++;
+      }
+
+      if (this.secretWord.indexOf(letter.letter) === -1) {
+        letter.type = 'hasnt';
+      }
+    });
+
+    this.currentWord.forEach((letter: WordleLetter) => {
+      if (letter.type === 'unknown') {
+        if (!letterCountByHasbut[letter.letter]) {
+          letterCountByHasbut[letter.letter] = 0;
+        }
+
+        const maxHasbutCount =
+          this.wordleWordLetterRepeats[letter.letter] -
+          (letterCountByHas[letter.letter] ?? 0);
+
+        if (letterCountByHasbut[letter.letter] < maxHasbutCount) {
+          letter.type = 'hasbut';
+          letterCountByHasbut[letter.letter]++;
+        } else {
+          letter.type = 'hasnt';
+        }
+      }
+    });
+
+    this.currentWord.forEach((letter: WordleLetter) => {
       if (this.wordleKeyboardKeyTypes[letter.letter] !== 'has') {
         this.wordleKeyboardKeyTypes[letter.letter] = letter.type;
       }
