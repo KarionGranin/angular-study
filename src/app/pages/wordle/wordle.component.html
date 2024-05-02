@@ -74,18 +74,26 @@
     </div>
   </div>
 
-  <div class="keyboard">
+  <div
+    class="keyboard"
+    *ngIf="wordleKeyboardKeyTypes$ | async as wordleKeyboardKeyTypes"
+  >
     <div class="keyboard-row" *ngFor="let keyboardRow of wordleKeyboard">
-      <ng-container>
-        <div
-          class="keyboard-btn"
-          [class.keyboard-btn-wide]="keyIsWide(key)"
-          (click)="keyboardKeyClick(key)"
-          *ngFor="let key of keyboardRow"
-        >
-          {{ getKeySymbol(key) }}
-        </div>
-      </ng-container>
+      <div
+        class="keyboard-btn"
+        [class.keyboard-btn-wide]="keyIsWide(key)"
+        [class.keyboard-btn-orange]="
+          wordleKeyboardKeyTypes[$any(key)] === 'hasbut'
+        "
+        [class.keyboard-btn-green]="wordleKeyboardKeyTypes[$any(key)] === 'has'"
+        [class.keyboard-btn-gray]="
+          wordleKeyboardKeyTypes[$any(key)] === 'hasnt'
+        "
+        (click)="keyboardKeyClick(key)"
+        *ngFor="let key of keyboardRow"
+      >
+        {{ getKeySymbol(key) }}
+      </div>
     </div>
   </div>
 </div>

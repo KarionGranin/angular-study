@@ -31,3 +31,7 @@ export interface WordleKeyboardKey {
 }
 
 export type WordleKeyboard = (WordleKeyboardKey | string)[][];
+
+export interface WordleKeyboardKeyType {
+  [key: string]: WordleLetterType;
+}

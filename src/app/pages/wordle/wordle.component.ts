@@ -6,6 +6,7 @@ import {
   WordleWord,
   WordleKeyboard,
   WordleKeyboardKey,
+  WordleKeyboardKeyType,
 } from './wordle.interface';
 import { WORDLE_KEYBOARD } from './wordle.config';
 
@@ -17,6 +18,9 @@ import { WORDLE_KEYBOARD } from './wordle.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WordleComponent {
+  public wordleKeyboardKeyTypes$: Observable<WordleKeyboardKeyType> =
+    this.wordleService.wordleKeyboardKeyTypes$;
+
   public size$: Observable<number> = this.wordleService.size$;
 
   public gameOver$: Observable<WordleGameOverType> =

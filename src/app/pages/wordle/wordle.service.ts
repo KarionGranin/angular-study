@@ -4,6 +4,7 @@ import { BehaviorSubject, fromEvent } from 'rxjs';
 import {
   WordleGameOverType,
   WordleKeyboardKey,
+  WordleKeyboardKeyType,
   WordleLetter,
   WordleLetterType,
   WordleWord,
@@ -40,6 +41,16 @@ export class WordleService {
   public gameOver$ = this.gameOver$$.asObservable();
 
   private wordleWordLetterRepeats: WordleWordLetterRepeats = {};
+
+  private wordleKeyboardKeyTypes$$ = new BehaviorSubject<WordleKeyboardKeyType>(
+    {}
+  );
+
+  public wordleKeyboardKeyTypes$ = this.wordleKeyboardKeyTypes$$.asObservable();
+
+  private get wordleKeyboardKeyTypes(): WordleKeyboardKeyType {
+    return this.wordleKeyboardKeyTypes$$.getValue();
+  }
 
   private get currentRowIndex(): number {
     return this.currentRowIndex$$.getValue();
@@ -125,6 +136,7 @@ export class WordleService {
     this.gameOver$$.next('unknown');
     this.resetWords();
     this.selectRandomWord();
+    this.wordleKeyboardKeyTypes$$.next({});
   }
 
   private getRandom(min: number, max: number): number {
@@ -206,9 +218,15 @@ export class WordleService {
       return;
     }
 
-    this.currentWord.forEach(
-      (letter: WordleLetter) => (letter.type = this.getTypeForLetter(letter))
-    );
+    this.currentWord.forEach((letter: WordleLetter) => {
+      letter.type = this.getTypeForLetter(letter);
+
+      if (this.wordleKeyboardKeyTypes[letter.letter] !== 'has') {
+        this.wordleKeyboardKeyTypes[letter.letter] = letter.type;
+      }
+    });
+
+    this.wordleKeyboardKeyTypes$$.next({ ...this.wordleKeyboardKeyTypes });
 
     this.wordRows$$.next([...this.wordRows]);
 
