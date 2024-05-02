@@ -13,7 +13,7 @@
 }
 
 .header {
-  color: #fff;
+  color: #c0d9ff;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -57,14 +57,14 @@
 }
 
 .size-btn {
-  color: #000000;
+  color: #c0d9ff;
   width: 48px;
   height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid black;
-  background: #fff3cd;
+  border: 2px solid #c0d9ff;
+  background: #0a0d12;
   cursor: pointer;
   margin: 0 4px;
   border-radius: 16%;
@@ -72,12 +72,12 @@
   transition: all 0.15s;
 
   &-active {
-    background: rgb(42, 151, 66);
+    background: #040933;
     cursor: default;
   }
 
   &:hover:not(&-active) {
-    background: rgb(71, 187, 96);
+    background: #252c38;
   }
 }
 
@@ -86,11 +86,11 @@
 }
 
 .cell {
-  color: #000000;
+  color: #fdffff;
   width: 76px;
   height: 76px;
-  background: rgb(255, 243, 205);
-  border: 2px solid #000000;
+  background: #0a0d12;
+  border: 2px solid #c0d9ff;
   border-radius: 10%;
   display: flex;
   justify-content: center;
@@ -104,17 +104,17 @@
   }
 
   &-gray {
-    background: rgb(80, 80, 80);
+    background: #464d57;
     color: #fff;
   }
 
   &-orange {
-    background: rgb(255, 183, 50);
+    background: #6b8dff;
     color: #fff;
   }
 
   &-green {
-    background: rgb(42, 151, 66);
+    background: #01c176;
     color: #fff;
   }
 }
@@ -123,13 +123,17 @@
   padding: 12px 10px;
   font-size: 24px;
   font-weight: bold;
-  color: #393926;
-  background: #ffffa5;
+  color: #d6e6ff;
+  background: #39487a;
   border: none;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.15s;
   margin-bottom: 16px;
+
+  &:hover {
+    background-color: #515b7e;
+  }
 }
 
 .controls {
@@ -153,15 +157,14 @@
 
 .keyboard-btn {
   align-items: center;
-  background-color: #fff3cd;
-  border: 2px solid #000000;
+  background-color: #0a0d12;
+  border: 2px solid #c0d9ff;
   border-radius: 4px;
-  color: inherit;
-  color: var(--text);
+  color: #c0d9ff;
   cursor: pointer;
   display: flex;
   flex: 1 1;
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 600;
   justify-content: center;
   margin: 3px;
@@ -177,21 +180,21 @@
   }
 
   &:hover {
-    background-color: #ffe693;
+    background-color: #252c38;
   }
 
   &-gray {
-    background-color: rgb(80, 80, 80);
+    background-color: #464d57;
     color: #fff;
   }
 
   &-orange {
-    background-color: rgb(255, 183, 50);
+    background-color: #6b8dff;
     color: #fff;
   }
 
   &-green {
-    background-color: rgb(42, 151, 66);
+    background-color: #01c176;
     color: #fff;
   }
 }
