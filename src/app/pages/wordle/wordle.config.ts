@@ -1,4 +1,4 @@
-import { WordCollection } from './wordle.interface';
+import { WordCollection, WordleKeyboard } from './wordle.interface';
 
 export const WORDLE_CONFIG = {
   alphabet: [
@@ -37,3 +37,21 @@ export const WORDLE_CONFIG = {
     'я',
   ],
 };
+
+export const WORDLE_KEYBOARD: WordleKeyboard = [
+  ['й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ'],
+  ['ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э'],
+  [
+    { key: '⌫', keyName: 'Backspace', wide: true, uppercase: false },
+    'я',
+    'ч',
+    'с',
+    'м',
+    'и',
+    'т',
+    'ь',
+    'б',
+    'ю',
+    { key: 'Enter', wide: true, uppercase: false },
+  ],
+];

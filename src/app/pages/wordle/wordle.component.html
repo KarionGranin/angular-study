@@ -1,112 +1,91 @@
-<div class="game">
-  <div class="header">
-    <div class="title">Сыграй в Wordle на русском!</div>
-    <div
-      class="controls"
-      *ngIf="{
-        gameOver: gameOver$ | async,
-        currentRowIndex: currentRowIndex$ | async,
-        size: size$ | async
-      } as params"
-    >
-      <div class="size">
-        <div class="size-title">Количество букв в загаданном слове</div>
-        <div class="size-btns">
-          <div
-            class="size-btn"
-            [class.size-btn-active]="params.size === n + 4"
-            *ngFor="let n of 8 | arrayFromNumber"
-            (click)="changeSize(n + 4)"
-          >
-            {{ n + 4 }}
+<div class="wordle">
+  <div class="game">
+    <div class="header">
+      <div class="title">Сыграй в Wordle на русском!</div>
+      <div
+        class="controls"
+        *ngIf="{
+          gameOver: gameOver$ | async,
+          currentRowIndex: currentRowIndex$ | async,
+          size: size$ | async
+        } as params"
+      >
+        <div class="size">
+          <div class="size-title">Количество букв в загаданном слове</div>
+          <div class="size-btns">
+            <div
+              class="size-btn"
+              [class.size-btn-active]="params.size === n + 4"
+              *ngFor="let n of 8 | arrayFromNumber"
+              (click)="changeSize(n + 4)"
+            >
+              {{ n + 4 }}
+            </div>
           </div>
         </div>
+
+        <button
+          class="reset-btn"
+          (click)="abortGame()"
+          *ngIf="
+            params.currentRowIndex ||
+            (params.gameOver !== 'unknown' && !params.currentRowIndex)
+          "
+        >
+          {{ params.gameOver === "unknown" ? "Сдаться" : "Начать заново" }}
+        </button>
       </div>
-
-      <button
-        class="reset-btn"
-        (click)="abortGame()"
-        *ngIf="
-          params.currentRowIndex ||
-          (params.gameOver !== 'unknown' && !params.currentRowIndex)
-        "
-      >
-        {{ params.gameOver === "unknown" ? "Сдаться" : "Начать заново" }}
-      </button>
     </div>
-  </div>
 
-  <div
-    class="cells"
-    *ngIf="{
-      size: (size$ | async) ?? 0,
-      wordRows: (wordRows$ | async) ?? []
-    } as params"
-  >
-    <div>
-      <table>
-        <tbody>
-          <tr *ngFor="let row of tryesCount | arrayFromNumber; let rowIndex">
-            <td
-              *ngFor="let col of params.size | arrayFromNumber; let letterIndex"
-            >
-              <div
-                class="cell"
-                [class.cell-animation]="params.wordRows[rowIndex][letterIndex]"
-                [class.cell-orange]="letter.type === 'hasbut'"
-                [class.cell-green]="letter.type === 'has'"
-                [class.cell-gray]="letter.type === 'hasnt'"
-                *ngIf="params.wordRows[rowIndex][letterIndex] ?? {} as letter"
+    <div
+      class="cells"
+      *ngIf="{
+        size: (size$ | async) ?? 0,
+        wordRows: (wordRows$ | async) ?? []
+      } as params"
+    >
+      <div>
+        <table>
+          <tbody>
+            <tr *ngFor="let row of tryesCount | arrayFromNumber; let rowIndex">
+              <td
+                *ngFor="
+                  let col of params.size | arrayFromNumber;
+                  let letterIndex
+                "
               >
-                {{ letter.letter ?? "" | uppercase }}
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                <div
+                  class="cell"
+                  [class.cell-animation]="
+                    params.wordRows[rowIndex][letterIndex]
+                  "
+                  [class.cell-orange]="letter.type === 'hasbut'"
+                  [class.cell-green]="letter.type === 'has'"
+                  [class.cell-gray]="letter.type === 'hasnt'"
+                  *ngIf="params.wordRows[rowIndex][letterIndex] ?? {} as letter"
+                >
+                  {{ letter.letter ?? "" | uppercase }}
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <div class="keyboard">
-    <div class="keyboard-row">
-      <div class="keyboard-btn">Й</div>
-      <div class="keyboard-btn">Ц</div>
-      <div class="keyboard-btn absent">У</div>
-      <div class="keyboard-btn">К</div>
-      <div class="keyboard-btn">Е</div>
-      <div class="keyboard-btn">Н</div>
-      <div class="keyboard-btn">Г</div>
-      <div class="keyboard-btn absent">Ш</div>
-      <div class="keyboard-btn">Щ</div>
-      <div class="keyboard-btn">З</div>
-      <div class="keyboard-btn absent">Х</div>
-      <div class="keyboard-btn">Ъ</div>
-    </div>
-    <div class="keyboard-row">
-      <div class="keyboard-btn">Ф</div>
-      <div class="keyboard-btn">Ы</div>
-      <div class="keyboard-btn">В</div>
-      <div class="keyboard-btn correct">А</div>
-      <div class="keyboard-btn">П</div>
-      <div class="keyboard-btn">Р</div>
-      <div class="keyboard-btn">О</div>
-      <div class="keyboard-btn">Л</div>
-      <div class="keyboard-btn">Д</div>
-      <div class="keyboard-btn">Ж</div>
-      <div class="keyboard-btn">Э</div>
-    </div>
-    <div class="keyboard-row">
-      <div class="keyboard-btn keyboard-btn-wide">⌫</div>
-      <div class="keyboard-btn">Я</div>
-      <div class="keyboard-btn">Ч</div>
-      <div class="keyboard-btn">С</div>
-      <div class="keyboard-btn absent">М</div>
-      <div class="keyboard-btn absent">И</div>
-      <div class="keyboard-btn">Т</div>
-      <div class="keyboard-btn">Ь</div>
-      <div class="keyboard-btn">Б</div>
-      <div class="keyboard-btn">Ю</div>
-      <div class="keyboard-btn keyboard-btn-wide">Enter</div>
+    <div class="keyboard-row" *ngFor="let keyboardRow of wordleKeyboard">
+      <ng-container>
+        <div
+          class="keyboard-btn"
+          [class.keyboard-btn-wide]="keyIsWide(key)"
+          (click)="keyboardKeyClick(key)"
+          *ngFor="let key of keyboardRow"
+        >
+          {{ getKeySymbol(key) }}
+        </div>
+      </ng-container>
     </div>
   </div>
 </div>

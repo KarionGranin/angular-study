@@ -1,8 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { WordleService } from './wordle.service';
 import { Observable } from 'rxjs';
-import { FormControl } from '@angular/forms';
-import { WordleGameOverType, WordleWord } from './wordle.interface';
+import {
+  WordleGameOverType,
+  WordleWord,
+  WordleKeyboard,
+  WordleKeyboardKey,
+} from './wordle.interface';
+import { WORDLE_KEYBOARD } from './wordle.config';
 
 @Component({
   selector: 'app-wordle',
@@ -24,6 +29,8 @@ export class WordleComponent {
 
   public wordRows$: Observable<WordleWord[]> = this.wordleService.wordRows$;
 
+  public readonly wordleKeyboard: WordleKeyboard = WORDLE_KEYBOARD;
+
   constructor(private wordleService: WordleService) {}
 
   public abortGame(): void {
@@ -32,5 +39,26 @@ export class WordleComponent {
 
   public changeSize(size: number): void {
     this.wordleService.changeSize(size);
+  }
+
+  public keyboardKeyIsObject(
+    key: WordleKeyboardKey | string
+  ): key is WordleKeyboardKey {
+    return typeof key === 'object';
+  }
+
+  public getKeySymbol(key: WordleKeyboardKey | string): string {
+    if (this.keyboardKeyIsObject(key)) {
+      return key.key;
+    }
+    return key;
+  }
+
+  public keyIsWide(key: WordleKeyboardKey | string): boolean {
+    return this.keyboardKeyIsObject(key) ? !!key.wide : false;
+  }
+
+  public keyboardKeyClick(key: WordleKeyboardKey | string): void {
+    this.wordleService.keyboardKeyClick(key);
   }
 }

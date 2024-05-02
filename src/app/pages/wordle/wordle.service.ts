@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { BehaviorSubject, fromEvent } from 'rxjs';
 import {
   WordleGameOverType,
+  WordleKeyboardKey,
   WordleLetter,
   WordleLetterType,
   WordleWord,
@@ -68,6 +69,19 @@ export class WordleService {
     this.listenSizeChanges();
     this.listenKeyboard();
     this.listenGameover();
+  }
+
+  public keyboardKeyClick(key: WordleKeyboardKey | string): void {
+    if (typeof key === 'object') {
+      if (key.keyName === 'Backspace') {
+        this.handleBackspace();
+      } else {
+        this.handleEnter();
+      }
+      return;
+    }
+
+    this.handleLetterKey(key);
   }
 
   public abortGame(): void {

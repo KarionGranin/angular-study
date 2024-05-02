@@ -1,3 +1,10 @@
+.wordle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 650px;
+}
+
 .game {
   display: flex;
   align-items: center;
@@ -160,8 +167,10 @@
   margin: 3px;
   min-height: 40px;
   min-width: 36px;
+
   padding: 2px;
   text-decoration: inherit;
+  user-select: none;
 
   &-wide {
     flex: 2 1;

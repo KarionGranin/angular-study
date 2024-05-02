@@ -22,3 +22,12 @@ export interface WordleGameOverModalData {
 export interface WordleWordLetterRepeats {
   [key: string]: number;
 }
+
+export interface WordleKeyboardKey {
+  key: string;
+  keyName?: string;
+  wide?: boolean;
+  uppercase?: boolean;
+}
+
+export type WordleKeyboard = (WordleKeyboardKey | string)[][];
