@@ -1,15 +1,16 @@
-<div class="wordle">
+<div
+  class="wordle"
+  *ngIf="{
+    gameOver: gameOver$ | async,
+    currentWord: (currentWord$ | async) ?? [],
+    size: (size$ | async) ?? 0,
+    wordRows: (wordRows$ | async) ?? []
+  } as params"
+>
   <div class="game">
     <div class="header">
       <div class="title">Сыграй в Wordle на русском!</div>
-      <div
-        class="controls"
-        *ngIf="{
-          gameOver: gameOver$ | async,
-          currentRowIndex: currentRowIndex$ | async,
-          size: size$ | async
-        } as params"
-      >
+      <div class="controls">
         <div class="size">
           <div class="size-title">Количество букв в загаданном слове</div>
           <div class="size-btns">
@@ -27,24 +28,14 @@
         <button
           class="reset-btn"
           (click)="abortGame()"
-          *ngIf="
-            params.currentRowIndex ||
-            (params.gameOver !== 'unknown' && !params.currentRowIndex)
-          "
+          *ngIf="params.wordRows.length > 0 || params.gameOver !== 'unknown'"
         >
           {{ params.gameOver === "unknown" ? "Сдаться" : "Начать заново" }}
         </button>
       </div>
     </div>
 
-    <div
-      class="cells"
-      *ngIf="{
-        size: (size$ | async) ?? 0,
-        wordRows: (wordRows$ | async) ?? [],
-        currentRowIndex: (currentRowIndex$ | async) ?? 0
-      } as params"
-    >
+    <div class="cells">
       <div
         class="row"
         *ngFor="let row of tryesCount | arrayFromNumber; let rowIndex"
@@ -52,29 +43,38 @@
         <ng-container
           *ngFor="let col of params.size | arrayFromNumber; let letterIndex"
         >
-          @if (params.wordRows[rowIndex][letterIndex] ?? {}; as letter) {
+          @if (
+            params.wordRows[rowIndex]?.[letterIndex] ??
+              (params.currentWord[letterIndex] &&
+              rowIndex <= params.wordRows.length
+                ? params.currentWord[letterIndex]
+                : $any({})) ??
+              $any({});
+            as letter
+          ) {
             <div
               class="cell"
-              [class.filled]="params.wordRows[rowIndex][letterIndex]"
-              [class.flipped]="
-                params.wordRows[rowIndex]?.length === params.size &&
-                params.currentRowIndex > rowIndex
+              [class.filled]="
+                params.currentWord[letterIndex] &&
+                rowIndex <= params.wordRows.length &&
+                !params.wordRows[rowIndex]
               "
+              [class.flipped]="params.wordRows[rowIndex]"
             >
               <div
                 class="cell-content"
-                [style.animation-delay]="200 * letterIndex + 'ms'"
+                [style.animation-delay]="flipDelay * letterIndex + 'ms'"
               >
                 <div class="cell-front">
-                  {{ letter.letter ?? "" | uppercase }}
+                  {{ letter?.letter ?? "" | uppercase }}
                 </div>
                 <div
                   class="cell-back"
-                  [class.hasbut]="letter.type === 'hasbut'"
-                  [class.has]="letter.type === 'has'"
-                  [class.hasnt]="letter.type === 'hasnt'"
+                  [class.hasbut]="letter?.type === 'hasbut'"
+                  [class.has]="letter?.type === 'has'"
+                  [class.hasnt]="letter?.type === 'hasnt'"
                 >
-                  {{ letter.letter ?? "" | uppercase }}
+                  {{ letter?.letter ?? "" | uppercase }}
                 </div>
               </div>
             </div>

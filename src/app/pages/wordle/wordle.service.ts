@@ -26,13 +26,13 @@ export class WordleService {
 
   public size$ = this.size$$.asObservable();
 
+  private currentWord$$ = new BehaviorSubject<WordleWord>([]);
+
+  public currentWord$ = this.currentWord$$.asObservable();
+
   private wordRows$$ = new BehaviorSubject<WordleWord[]>([]);
 
   public wordRows$ = this.wordRows$$.asObservable();
-
-  private currentRowIndex$$ = new BehaviorSubject<number>(0);
-
-  public currentRowIndex$ = this.currentRowIndex$$.asObservable();
 
   public readonly tryesCount = 6;
 
@@ -54,14 +54,6 @@ export class WordleService {
     return this.wordleKeyboardKeyTypes$$.getValue();
   }
 
-  private get currentRowIndex(): number {
-    return this.currentRowIndex$$.getValue();
-  }
-
-  private set currentRowIndex(index: number) {
-    this.currentRowIndex$$.next(index);
-  }
-
   private get gameOver(): WordleGameOverType {
     return this.gameOver$$.getValue();
   }
@@ -70,12 +62,16 @@ export class WordleService {
     return this.size$$.getValue();
   }
 
-  private get wordRows(): WordleWord[] {
-    return this.wordRows$$.getValue();
+  private get currentWord(): WordleWord {
+    return this.currentWord$$.getValue();
   }
 
-  private get currentWord(): WordleWord {
-    return this.wordRows[this.currentRowIndex];
+  private set currentWord(word: WordleWord) {
+    this.currentWord$$.next(word);
+  }
+
+  private get wordRows(): WordleWord[] {
+    return this.wordRows$$.getValue();
   }
 
   constructor(
@@ -125,19 +121,21 @@ export class WordleService {
   }
 
   private listenGameover(): void {
-    this.gameOver$$.pipe(delay(this.flipDelay * this.size)).subscribe(() => {
-      if (this.gameOver !== 'unknown') {
-        this.openGameoverDialog();
-      }
-    });
+    this.gameOver$$
+      .pipe(delay(this.flipDelay * (this.size + 2)))
+      .subscribe(() => {
+        if (this.gameOver !== 'unknown') {
+          this.openGameoverDialog();
+        }
+      });
   }
 
   private resetWords(): void {
-    this.wordRows$$.next([...new Array(this.tryesCount)].map(() => []));
+    this.wordRows$$.next([]);
   }
 
   private reset(): void {
-    this.currentRowIndex = 0;
+    this.currentWord = [];
     this.gameOver$$.next('unknown');
     this.resetWords();
     this.selectRandomWord();
@@ -176,8 +174,7 @@ export class WordleService {
 
   private handleBackspace(): void {
     if (this.currentWord.length > 0) {
-      this.wordRows[this.currentRowIndex] = this.currentWord.slice(0, -1);
-      this.wordRows$$.next([...this.wordRows]);
+      this.currentWord = this.currentWord.slice(0, -1);
     }
   }
 
@@ -249,6 +246,8 @@ export class WordleService {
 
     this.wordleKeyboardKeyTypes$$.next({ ...this.wordleKeyboardKeyTypes });
 
+    this.wordRows.push(this.currentWord);
+
     this.wordRows$$.next([...this.wordRows]);
 
     if (this.wordIsCompleted(this.currentWord)) {
@@ -256,9 +255,9 @@ export class WordleService {
       return;
     }
 
-    if (this.currentRowIndex < this.tryesCount - 1) {
-      this.currentRowIndex++;
-    } else {
+    this.currentWord = [];
+
+    if (this.wordRows.length === this.tryesCount) {
       this.gameOver$$.next('lose');
     }
   }
@@ -271,7 +270,7 @@ export class WordleService {
         index: this.currentWord.length,
       });
 
-      this.wordRows$$.next([...this.wordRows]);
+      this.currentWord = [...this.currentWord];
     }
   }
 

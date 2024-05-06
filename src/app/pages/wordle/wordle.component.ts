@@ -23,13 +23,14 @@ export class WordleComponent {
 
   public size$: Observable<number> = this.wordleService.size$;
 
+  public currentWord$: Observable<WordleWord> = this.wordleService.currentWord$;
+
   public gameOver$: Observable<WordleGameOverType> =
     this.wordleService.gameOver$;
 
-  public currentRowIndex$: Observable<number> =
-    this.wordleService.currentRowIndex$;
-
   public readonly tryesCount: number = this.wordleService.tryesCount;
+
+  public readonly flipDelay: number = this.wordleService.flipDelay;
 
   public wordRows$: Observable<WordleWord[]> = this.wordleService.wordRows$;
 
@@ -46,7 +47,7 @@ export class WordleComponent {
   }
 
   public keyboardKeyIsObject(
-    key: WordleKeyboardKey | string
+    key: WordleKeyboardKey | string,
   ): key is WordleKeyboardKey {
     return typeof key === 'object';
   }
