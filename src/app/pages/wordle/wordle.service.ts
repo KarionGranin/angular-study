@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { BehaviorSubject, fromEvent } from 'rxjs';
+import { BehaviorSubject, delay, fromEvent } from 'rxjs';
 import {
   WordleGameOverType,
   WordleKeyboardKey,
@@ -18,6 +18,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable()
 export class WordleService {
+  public readonly flipDelay: number = 200;
+
   private readonly defaultSize: number = 4;
 
   private size$$ = new BehaviorSubject<number>(this.defaultSize);
@@ -43,7 +45,7 @@ export class WordleService {
   private wordleWordLetterRepeats: WordleWordLetterRepeats = {};
 
   private wordleKeyboardKeyTypes$$ = new BehaviorSubject<WordleKeyboardKeyType>(
-    {}
+    {},
   );
 
   public wordleKeyboardKeyTypes$ = this.wordleKeyboardKeyTypes$$.asObservable();
@@ -76,7 +78,10 @@ export class WordleService {
     return this.wordRows[this.currentRowIndex];
   }
 
-  constructor(private dialog: MatDialog, private snackBar: MatSnackBar) {
+  constructor(
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
+  ) {
     this.listenSizeChanges();
     this.listenKeyboard();
     this.listenGameover();
@@ -120,7 +125,7 @@ export class WordleService {
   }
 
   private listenGameover(): void {
-    this.gameOver$$.subscribe(() => {
+    this.gameOver$$.pipe(delay(this.flipDelay * this.size)).subscribe(() => {
       if (this.gameOver !== 'unknown') {
         this.openGameoverDialog();
       }
@@ -192,7 +197,7 @@ export class WordleService {
 
     if (
       !WORD_COLLECTION[this.size].includes(
-        this.currentWord.map((letter: WordleLetter) => letter.letter).join('')
+        this.currentWord.map((letter: WordleLetter) => letter.letter).join(''),
       )
     ) {
       this.showSnackbar('Такого слова не существует!');
@@ -281,7 +286,7 @@ export class WordleService {
           this.handleBackspace();
           return;
         }
-      }
+      },
     );
 
     fromEvent<KeyboardEvent>(document, 'keyup').subscribe(
@@ -298,7 +303,7 @@ export class WordleService {
         if (WORDLE_CONFIG.alphabet.includes(event.key.toLowerCase())) {
           this.handleLetterKey(event.key.toLowerCase());
         }
-      }
+      },
     );
   }
 }

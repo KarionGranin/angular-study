@@ -41,35 +41,45 @@
       class="cells"
       *ngIf="{
         size: (size$ | async) ?? 0,
-        wordRows: (wordRows$ | async) ?? []
+        wordRows: (wordRows$ | async) ?? [],
+        currentRowIndex: (currentRowIndex$ | async) ?? 0
       } as params"
     >
-      <div>
-        <table>
-          <tbody>
-            <tr *ngFor="let row of tryesCount | arrayFromNumber; let rowIndex">
-              <td
-                *ngFor="
-                  let col of params.size | arrayFromNumber;
-                  let letterIndex
-                "
+      <div
+        class="row"
+        *ngFor="let row of tryesCount | arrayFromNumber; let rowIndex"
+      >
+        <ng-container
+          *ngFor="let col of params.size | arrayFromNumber; let letterIndex"
+        >
+          @if (params.wordRows[rowIndex][letterIndex] ?? {}; as letter) {
+            <div
+              class="cell"
+              [class.filled]="params.wordRows[rowIndex][letterIndex]"
+              [class.flipped]="
+                params.wordRows[rowIndex]?.length === params.size &&
+                params.currentRowIndex > rowIndex
+              "
+            >
+              <div
+                class="cell-content"
+                [style.animation-delay]="200 * letterIndex + 'ms'"
               >
+                <div class="cell-front">
+                  {{ letter.letter ?? "" | uppercase }}
+                </div>
                 <div
-                  class="cell"
-                  [class.cell-animation]="
-                    params.wordRows[rowIndex][letterIndex]
-                  "
-                  [class.cell-orange]="letter.type === 'hasbut'"
-                  [class.cell-green]="letter.type === 'has'"
-                  [class.cell-gray]="letter.type === 'hasnt'"
-                  *ngIf="params.wordRows[rowIndex][letterIndex] ?? {} as letter"
+                  class="cell-back"
+                  [class.hasbut]="letter.type === 'hasbut'"
+                  [class.has]="letter.type === 'has'"
+                  [class.hasnt]="letter.type === 'hasnt'"
                 >
                   {{ letter.letter ?? "" | uppercase }}
                 </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </div>
+            </div>
+          }
+        </ng-container>
       </div>
     </div>
   </div>

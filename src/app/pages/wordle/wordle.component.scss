@@ -1,3 +1,11 @@
+$cell-size: 64px;
+$cell-color-default: #0a0d12;
+$cell-color-hasnt: #464d57;
+$cell-color-hasbut: #6b8dff;
+$cell-color-has: #01c176;
+$cell-font-size: 48px;
+$cell-margin: 3px;
+
 .wordle {
   display: flex;
   flex-direction: column;
@@ -81,40 +89,87 @@
   }
 }
 
+.row {
+  display: flex;
+
+  &.error {
+    animation-delay: 0ms;
+    animation: row-error linear;
+    animation-duration: 0.15s;
+  }
+}
+
 .cells {
   margin-bottom: 16px;
 }
 
 .cell {
   color: #fdffff;
-  width: 76px;
-  height: 76px;
-  background: #0a0d12;
-  border: 2px solid #c0d9ff;
-  border-radius: 10%;
+  width: $cell-size;
+  height: $cell-size;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 48px;
+  font-size: $cell-font-size;
+  margin: $cell-margin;
 
-  &-animation {
+  &.filled {
     animation-delay: 0ms;
     animation: cellFill linear;
     animation-duration: 0.3s;
   }
 
-  &-gray {
-    background: #464d57;
+  &.flipped &-content {
+    animation: cell-flipped forwards;
+    animation-duration: 1s;
+  }
+}
+
+.cell-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  border: 2px solid #c0d9ff;
+  border-radius: 10%;
+  box-sizing: border-box;
+}
+
+.cell-front,
+.cell-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6%;
+}
+
+.cell-front {
+  background: $cell-color-default;
+}
+
+.cell-back {
+  transform: rotateY(180deg);
+  background: blue;
+
+  &.hasnt {
+    background: $cell-color-hasnt;
     color: #fff;
   }
 
-  &-orange {
-    background: #6b8dff;
+  &.hasbut {
+    background: $cell-color-hasbut;
     color: #fff;
   }
 
-  &-green {
-    background: #01c176;
+  &.has {
+    background: $cell-color-has;
     color: #fff;
   }
 }
@@ -196,5 +251,29 @@
   &-green {
     background-color: #01c176;
     color: #fff;
+  }
+}
+
+@keyframes row-error {
+  0% {
+    transform: translateX(0);
+  }
+
+  33% {
+    transform: translateX(-16px);
+  }
+
+  66% {
+    transform: translateX(16px);
+  }
+}
+
+@keyframes cell-flipped {
+  0% {
+    transform: rotateY(0deg);
+  }
+
+  100% {
+    transform: rotateY(180deg);
   }
 }
