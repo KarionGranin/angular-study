@@ -1,1 +1,9 @@
 <div>sudoku</div>
+
+<div class="sudoku">
+  <div class="row" *ngFor="let i of 3 | arrayFromNumber">
+    <app-sudoku-square
+      *ngFor="let j of 3 | arrayFromNumber"
+    ></app-sudoku-square>
+  </div>
+</div>

@@ -9,5 +9,7 @@ import { SudokuService } from './sudoku.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SudokuComponent {
+  public readonly size: number = this.sudokuService.size;
+
   constructor(private readonly sudokuService: SudokuService) {}
 }

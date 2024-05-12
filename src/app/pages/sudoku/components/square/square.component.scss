@@ -1,0 +1,23 @@
+.square {
+  border: 2px solid black;
+}
+
+.cells {
+  width: 100%;
+}
+
+.row {
+  width: 100%;
+  display: flex;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  background: indianred;
+  width: 48px;
+  height: 48px;
+  border: 1px solid black;
+}
