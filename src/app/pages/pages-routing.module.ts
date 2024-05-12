@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { WordleComponent } from './wordle/wordle.component';
 import { FiftyComponent } from './fifty/fifty.component';
+import { SudokuComponent } from './sudoku/sudoku.component';
 
 const routes: Routes = [
   {
@@ -14,10 +15,13 @@ const routes: Routes = [
     path: 'wordle',
     component: WordleComponent,
   },
-
   {
     path: 'fifty',
     component: FiftyComponent,
+  },
+  {
+    path: 'sudoku',
+    component: SudokuComponent,
   },
 ];
 
