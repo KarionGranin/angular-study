@@ -1,1 +1,10 @@
-<div>фифти</div>
+<div class="cells">
+  <div
+    class="cell"
+    [class.cell-empty]="n === 0"
+    [fiftyCell]="n"
+    *ngFor="let n of initialCells$ | async"
+  >
+    {{ n === 0 ? "" : n }}
+  </div>
+</div>

@@ -1,0 +1,25 @@
+$cell-size: 64px;
+
+.cells {
+  width: calc($cell-size * 4);
+  height: calc($cell-size * 4);
+  position: relative;
+}
+
+.cell {
+  width: $cell-size;
+  height: $cell-size;
+  background-color: red;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  position: absolute;
+  transition: all 0.3s;
+  outline: 1px solid #3d1f15;
+  outline-offset: -1px;
+
+  &-empty {
+    background-color: green;
+  }
+}
